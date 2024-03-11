@@ -14,7 +14,7 @@ echo "= Steam NTFS Configuration ="
 echo
 echo "This script will configure a NTFS disk containing Steam games, that was"
 echo "previously used in a Windows environment, to work with Proton on Linux."
-echo "Please make sure that the drive is properly mounted."
+echo "Please make sure that the drive is properly connected."
 echo
 echo "Press Enter to continue..."
 read
@@ -27,6 +27,17 @@ if ! $NTFS_DRIVER --version > /dev/null 2>&1; then
 	exit 1
 else
 	echo "OK"
+fi
+
+# Ask the user for path
+echo
+echo "Specify the path where you want to mount the disk."
+echo "The default path is \"$MOUNT_PATH\"."
+echo
+echo -n "Path [$MOUNT_PATH]: "
+read INPUT
+if [ ! -z "$INPUT" ]; then
+	MOUNT_PATH="$INPUT"
 fi
 
 # Check if path already exists
@@ -123,8 +134,8 @@ echo "Available block devices:"
 echo
 lsblk -f
 echo
-echo "Specify the NTFS partition where your Steam games are currently stored."
-echo "This partition will be mounted later. (e.g., 'sda1')"
+echo "Specify the NTFS partition where your Steam games are stored. (e.g., 'sda1')"
+echo "This partition will be mounted later."
 echo
 echo -n "Partition: "
 read DEVICE
@@ -153,7 +164,8 @@ echo "UUID: $UUID"
 echo "User ID: $USER_ID"
 echo "Group ID: $GROUP_ID"
 echo
-echo "A backup of /etc/fstab will be made."
+echo "/etc/fstab is now ready to be configured."
+echo "A backup of /etc/fstab will be made before any changes are applied."
 echo
 echo "Press Enter to apply settings..."
 read
@@ -204,6 +216,44 @@ else
 	exit 1
 fi
 
+# Inform user that the device will be mounted
+echo
+echo "The device will now be mounted to \"$MOUNT_PATH\"."
+echo
+echo "Press Enter to mount the device..."
+read
+
+# Attempt to mount as a test
+echo -n "Testing mount... "
+sudo mount "UUID=$UUID"
+if [ $? -eq 0 ]; then
+	echo "OK"
+else
+	echo "ERROR"
+	echo "Cannot mount device." >&2
+	
+	# Inform the user that the mount did not work
+	echo
+	echo "The device could not be mounted."
+	echo "The backup of /etc/fstab will be restored."
+	echo
+	echo "Press Enter to continue..."
+	read
+	
+	# Restore the backup
+	sudo cp "$backup_name" /etc/fstab
+	if [ $? -eq 0 ]; then
+		echo "Backup restored."
+		rm -f "$backup_name"
+	else
+		echo "Cannot restore backup of /etc/fstab." >&2
+		echo "You can restore the backup manually with:"
+		echo "sudo cp $backup_name /etc/fstab"
+	fi
+	
+	exit 1
+fi
+
 # Configuration complete
 echo
 echo "DONE!"
@@ -233,7 +283,7 @@ echo "Press Enter for more information..."
 read
 
 # Inform user that a reboot is required
-echo "A reboot is required for the changes to take effect."
+echo "A reboot is recommended."
 echo "The disk should be mounted at \"$MOUNT_PATH\" after the reboot."
 echo
 echo "You can then add the disk to Steam by going to:"

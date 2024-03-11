@@ -16,6 +16,7 @@ The script performs the following:
 6. Finds UUID for the selected device.
 7. Backs up fstab.
 8. Writes data to fstab and creates mount point.
+9. Attempts to mount the disk and verifies the result.
 
 The script provides important information during and after its execution to help guide you through the process, and will not modify any files unless you give it permission to do so.
 
@@ -29,4 +30,4 @@ The script will guide you through the process and automate as much as possible.
 If Windows is installed on the NTFS partition, the Windows Fast Startup feature can cause the mount command to fail.\
 To prevent that, consider disabling it.
 
-For more information, refer to this tutorial: [PassFab: Disable Fast Startup](https://www.passfab.com/windows-tips/disable-fast-startup-windows.html).
+For more information, refer to this tutorial: [PassFab: Disable Fast Startup](https://www.passfab.com/windows-10/disable-fast-boot-windows-10.html#way3).
