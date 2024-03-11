@@ -68,22 +68,40 @@ fi
 echo -n "Verifying user ID "
 USER_ID=$(id -u)
 if [ -z "$USER_ID" ]; then
-	echo "ERROR"
+	echo " ERROR"
 	echo "Cannot get user ID." >&2
 	exit 1
 else
 	echo -n "$USER_ID"
+	# Warn if ID is 0
+	if [ "$USER_ID" -eq 0 ]; then
+		echo " WARNING"
+		echo "User ID is 0. This is not recommended." >&2
+		echo "You should not run this script as root." >&2
+		echo
+		echo "Press Enter to continue anyway..."
+		read
+	fi
 fi
 
 # Get the group ID
 echo -n " & group ID "
 GROUP_ID=$(id -g)
 if [ -z "$GROUP_ID" ]; then
-	echo "ERROR"
+	echo " ERROR"
 	echo "Cannot get group ID." >&2
 	exit 1
 else
 	echo "$GROUP_ID... OK"
+	# Warn if ID is 0
+	if [ "$GROUP_ID" -eq 0 ]; then
+		echo " WARNING"
+		echo "Group ID is 0. This is not recommended." >&2
+		echo "You should not run this script as root." >&2
+		echo
+		echo "Press Enter to continue anyway..."
+		read
+	fi
 fi
 
 # Check of tools exist using whereis (check if where is exists too!)
