@@ -262,7 +262,7 @@ else
 	sudo cp "$backup_name" /etc/fstab
 	if [ $? -eq 0 ]; then
 		echo "Backup restored."
-		rm -f "$backup_name"
+		sudo rm -f "$backup_name"
 	else
 		echo "Cannot restore backup of /etc/fstab." >&2
 		echo "You can restore the backup manually with:"
