@@ -45,11 +45,14 @@ echo -n "Verifying mount path \"$MOUNT_PATH\"... "
 if [ -d "$MOUNT_PATH" ]; then
 	echo "WARNING"
 	echo "Mount path \"$MOUNT_PATH\" already exists." >&2
+	echo
+	echo "Press Enter to continue anyway..."
+	read
 else
 	echo "OK"
 fi
 
-# Check so that fstab is in order
+# Make sure fstab is in order
 echo -n "Verifying \"/etc/fstab\"... "
 if [ ! -f /etc/fstab ]; then
 	echo "ERROR"
@@ -166,6 +169,32 @@ if [ -z "$UUID" ]; then
 	echo "ERROR"
 	echo "Cannot get UUID of disk \"$DEVICE\". Make sure you entered the correct disk name." >&2
 	exit 1
+else
+	echo "OK"
+fi
+
+# Check if the UUID is already in fstab
+echo -n "Verifying UUID in \"/etc/fstab\"... "
+if grep -q "$UUID" /etc/fstab; then
+	echo "WARNING"
+	echo "UUID \"$UUID\" already exists in \"/etc/fstab\"." >&2
+	echo "This will most likely cause issues." >&2
+	echo
+	echo "Press Enter to continue anyway..."
+	read
+else
+	echo "OK"
+fi
+
+# Check if the drive is already mounted
+echo -n "Verifying if \"$DEVICE\" is mounted... "
+if grep -q "$DEVICE" /proc/mounts; then
+	echo "WARNING"
+	echo "Device \"$DEVICE\" is already mounted." >&2
+	echo "This will most likely cause issues." >&2
+	echo
+	echo "Press Enter to continue anyway..."
+	read
 else
 	echo "OK"
 fi
