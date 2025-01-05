@@ -335,6 +335,7 @@ echo "The disk should be mounted at \"$MOUNT_PATH\" after the reboot."
 echo
 echo "You can then add the disk to Steam by going to:"
 echo "Settings -> Storage -> and in the drop down menu, select Add Drive."
+echo "You should not select \"$MOUNT_PATH\" directly, but instead your Steam folder."
 echo
 echo "Press Enter to continue..."
 read
